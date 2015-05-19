@@ -5,5 +5,7 @@ First, I convert the given regular expression into a nondeterministic finite aut
 So far, I’ve written this according what I learned about regular expressions in my theoretical computer science class, but I know that regular expressions are used a lot in real world programming and are slightly different, so I’m hoping to add on to this project including:
 
 -the rest of the operators: ^, $, ?, +, {m,n}
+
 -options to make it greedy or not
+
 -finding a match anywhere in the string instead of just matching the whole string exactly
