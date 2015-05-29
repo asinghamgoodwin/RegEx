@@ -64,15 +64,16 @@ class State():
         self.name = name #take this out in the final version
         self.acceptState = False #these both get updated after the state is created
         self.startState = False
-        
+
+        self.outDict = {}
         #if the trap state doesn't exist yet, we need to just make an empty transition dict
         #but if it has already been defined elsewhere, we can pass it in and make a dict
         #that sends everything to the trap for now, until later when we might change
         #some of the destinations to new states or add 'free' transitions
         if waitForDict == None: 
-            self.outDict = {'0': trap, '1': trap}
-        else:
-            self.outDict = {}
+            for char in self.alphabet:
+                self.outDict[char] = trap
+
 
     #this is just for printing out while debugging so you can see a text representation of the state machine
     def prettyDict(self):
@@ -85,8 +86,8 @@ class State():
         return prettyDict
 
 
-names = ['r', 'q', 'p', 'o', 'n', 'm', 'l', 'k', 'j',
-     'i', 'h', 'g', 'f', 'e', 'd', 'c', 'b', 'a'] #this is nice for debugging/visualizing, but I'll get rid of it later on
+#names = ['r', 'q', 'p', 'o', 'n', 'm', 'l', 'k', 'j',
+#     'i', 'h', 'g', 'f', 'e', 'd', 'c', 'b', 'a'] #this is nice for debugging/visualizing, but I'll get rid of it later on
 
 
 #this is sort of the inside of recusive part of createStatesMASTER.
@@ -97,14 +98,15 @@ def createStates(alphabet, expression, holding, trap, statesList, holdingSTAR=No
     holding = holding
     holdingSTAR = holdingSTAR
 
-    if expression[0] == "(" and findBuddy(expression, 0) == len(expression)-1 and expression[-2] != "*":
-        expression = expression[1:-1] #we can take out parenthases if they enclose the whole machine
+    if expression[0] == "(" and findBuddy(expression, 0) == len(expression)-1 and expression[-2] != "*" and expression[1] != "|":
+        expression = expression[1:-1] #we can take out parenthases if they enclose the whole machine...
+        #but not if they're directly enclosing a * or a |
     
     i = 0
     while i < len(expression):
         x = expression[i]
         if x in alphabet+["."]: #if its just a regular character
-            newState = State(names.pop(), alphabet, trap) #make the new state
+            newState = State(str(i), alphabet, trap) #make the new state
             if x == ".":
                 for char in alphabet: #if anything leads into it
                     holding.outDict[char] = newState #make a dict that always points there
@@ -121,7 +123,7 @@ def createStates(alphabet, expression, holding, trap, statesList, holdingSTAR=No
             close = findBuddy(expression, i)
 
             if expression[close-1] == "*": #if the whole machine inside of these parens gets *'d, we need to do some set-up:
-                star = State(names.pop(), alphabet, trap) #make the state that allows us to circumvent the machine all together (0 iterations of the *)
+                star = State(str(i), alphabet, trap) #make the state that allows us to circumvent the machine all together (0 iterations of the *)
                 statesList.append(star)
 
                 #set off to make the machine inside the parens. whatever comes out of that should lead into the next state, after the machine
@@ -139,20 +141,20 @@ def createStates(alphabet, expression, holding, trap, statesList, holdingSTAR=No
                     
                 m1expression = expression[i+3:m1close+1]
                 
-                m1helper = State(names.pop(), alphabet, trap)
+                m1helper = State(str(i), alphabet, trap)
                 statesList.append(m1helper)
                 m1output = createStates(alphabet, m1expression, m1helper, trap, statesList)
 
 
                 m2expression = expression[separator+1:close]
                 
-                m2helper = State(names.pop(), alphabet, trap)
+                m2helper = State(str(i), alphabet, trap)
                 statesList.append(m2helper)
                 m2output = createStates(alphabet, m2expression, m2helper, trap, statesList)
 
                 holding.outDict['free'] = [m1helper, m2helper]
 
-                endHelper = State(names.pop(), alphabet, trap)
+                endHelper = State(str(i), alphabet, trap)
                 statesList.append(endHelper)
                 
                 m1output.outDict['free'] = endHelper
