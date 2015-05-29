@@ -27,7 +27,7 @@ class Language():
                     branch1 = y.outDict['free'][1]
                     y = branch0 #keep the first one and keep going through this process of checking for free transitions
                     z = branch1
-                    possibleNewStates.union(freeTransitions(z))
+                    possibleNewStates = possibleNewStates.union(freeTransitions(z))
                 else:
                     y = y.outDict['free']
                 possibleNewStates.add(y)
@@ -46,27 +46,11 @@ class Language():
                 nextStates.add(state.outDict[character])
 
             currentStates = nextStates #now these are are current states...
-            #nextStates = set()
 
             for state in currentStates: #...but we also have to deal with free transitions.
                                         #Keep every state in the set, but add every state we /could/ get to through a free transition
                 currentStates = currentStates.union(freeTransitions(state))
 
-
-##
-##                y = state #y will get updated at each state we step through on a free transition to ensure that we get as far as possible
-##                while 'free' in y.outDict.keys():
-##                    if type(y.outDict['free']) == list: #if you could transition freely to multiple states
-##                        for newState in y.outDict['free']:
-##                            nextStates.append(newState) #put each of them into the nextStates set
-##                        y = y.outDict['free'][0] #keep the first one and keep going through this process of checking for free transitions
-##                        z = y.outDict['free'][1]
-##                        #########how to I deal with adding in more states through free transitions for the other branch???########
-##                    else:
-##                        y = y.outDict['free']
-##                    nextStates.add(y)
-##            currentStates = currentStates.union(nextStates) #now add the states we got to freely to the states we got from the character transition
-## 
         for state in currentStates:
             if state.acceptState:
                 return True
@@ -231,7 +215,7 @@ F = "1(00|101)"
 ##print match(binary, A, aCheck2) == False
 ##print match(binary, A, aCheck3) == True
 
-##aLang = Language(binary, A)
+aLang = Language(binary, A)
 
 
 ##fCheck1 = "1101" #true
@@ -274,9 +258,9 @@ F = "1(00|101)"
 ##
 
 
-#bList = createStatesMASTER(binary, parens(binary, B))
-#cList = createStatesMASTER(binary, parens(binary, C))
-#eList = createStatesMASTER(binary, parens(binary, E))
+##bList = createStatesMASTER(binary, parens(binary, B))
+##cList = createStatesMASTER(binary, parens(binary, C))
+##eList = createStatesMASTER(binary, parens(binary, E))
 
 ##
 ##for state in aLang.states:
