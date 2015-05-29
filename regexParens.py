@@ -27,16 +27,20 @@ def parens(alphabet, stringExpression):
 
     #this for loop takes care of all of the stars that directly follow a character
     starList.reverse() #largest to smallest
-    for star in starList:
+
+    starList2 = starList[:]
+    for j in range(len(starList)):
+        star = starList[j]
         if expression[star-1] in alphabet+["."]: #if it is immediately after a character or .
-            starList.remove(star) #take it out of the list, because it has been dealt with
-            if not (expression[star-2] == "(" and expression[star+1] == ")"): #and our a* isn't surrounded by parens
+            starList2.remove(star) #take it out of the list, because it has been dealt with
+            if not (expression[star-2] == "(" and expression[star+1] == ")") or star == 1 or star == len(expression): #and our a* isn't surrounded by parens
                 expression.insert(star-1,"(") #put a ( before the character
                 expression.insert(star+2,")") #put a ) before what comes after the star (which has no moved over one)
-                for i in range(len(starList)): #look through the rest of the star positions...
-                    if starList[i] > star: #...for any stars appearing later in the expression
-                        starList[i] += 2 #and add two to their position, because the expression has grown by 
+                for i in range(len(starList2)): #look through the rest of the star positions...
+                    if starList2[i] > star: #...for any stars appearing later in the expression
+                        starList2[i] += 2 #and add two to their position, because the expression has grown by 
     
+    starList = starList2    
     #the only stars left in the list are ones right after a ), and this while loop takes care of them
     starList.reverse()
     while len(starList) > 0:
@@ -119,16 +123,21 @@ def parensPLUS(alphabet, stringExpression):
 
     #this for loop takes care of all of the stars that directly follow a character
     starList.reverse() #largest to smallest
-    for star in starList:
+
+    starList2 = starList[:]
+    for j in range(len(starList)):
+        star = starList[j]
         if expression[star-1] in alphabet+["."]: #if it is immediately after a character or .
-            starList.remove(star) #take it out of the list, because it has been dealt with
-            if not (expression[star-2] == "(" and expression[star+1] == ")"): #and our a* isn't surrounded by parens
+            starList2.remove(star) #take it out of the list, because it has been dealt with
+            if not (expression[star-2] == "(" and expression[star+1] == ")") or star == 1 or star == len(expression): #and our a* isn't surrounded by parens
                 expression.insert(star-1,"(") #put a ( before the character
                 expression.insert(star+2,")") #put a ) before what comes after the star (which has no moved over one)
-                for i in range(len(starList)): #look through the rest of the star positions...
-                    if starList[i] > star: #...for any stars appearing later in the expression
-                        starList[i] += 2 #and add two to their position, because the expression has grown by 
+                for i in range(len(starList2)): #look through the rest of the star positions...
+                    if starList2[i] > star: #...for any stars appearing later in the expression
+                        starList2[i] += 2 #and add two to their position, because the expression has grown by 
     
+    starList = starList2
+
     #the only stars left in the list are ones right after a ), and this while loop takes care of them
     starList.reverse()
     while len(starList) > 0:
