@@ -11,4 +11,4 @@ So far, I’ve written this according what I learned about regular expressions i
 -finding a match anywhere in the string instead of just matching the whole string exactly
 
 
-If you want to use this to check your strings, you can either use the match() function to get a True/False, or you can define a Language and then check as many strings as you want for membership in that language using the method checkString().
+To use this code: in the regexMatching.py file, you can either use the match() function (supplying an alphabet, defining expression, and string to be checked) to get a True/False, or you can define a Language and then check as many strings as you want for membership in that language using the checkString() method.
