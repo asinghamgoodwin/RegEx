@@ -16,8 +16,30 @@ class Language():
 
 
     def checkString(self, string):
+        def freeTransitions(state):
+            possibleNewStates = set()
+            y = state #y will get updated at each state we step through on a free transition to ensure that we get as far as possible
+            while 'free' in y.outDict.keys():
+                if type(y.outDict['free']) == list: #if you could transition freely to multiple states
+                    for newState in y.outDict['free']:
+                        possibleNewStates.add(newState) #put each of them into the nextStates set
+                    branch0 = y.outDict['free'][0]
+                    branch1 = y.outDict['free'][1]
+                    y = branch0 #keep the first one and keep going through this process of checking for free transitions
+                    z = branch1
+                    possibleNewStates.union(freeTransitions(z))
+                else:
+                    y = y.outDict['free']
+                possibleNewStates.add(y)
+            return possibleNewStates
+
+
         
-        currentStates = set([s for s in self.states if s.startState]) #just the start state so far
+        startState = [s for s in self.states if s.startState]
+        currentStates = set(startState) #just the start state so far
+        currentStates = currentStates.union(freeTransitions(startState[0]))
+
+            
         for character in string:
             nextStates = set()
             for state in currentStates: #transition on that character
@@ -25,26 +47,6 @@ class Language():
 
             currentStates = nextStates #now these are are current states...
             #nextStates = set()
-
-
-            def freeTransitions(state):
-                possibleNewStates = set()
-                y = state #y will get updated at each state we step through on a free transition to ensure that we get as far as possible
-                while 'free' in y.outDict.keys():
-                    if type(y.outDict['free']) == list: #if you could transition freely to multiple states
-                        for newState in y.outDict['free']:
-                            possibleNewStates.add(newState) #put each of them into the nextStates set
-                        branch0 = y.outDict['free'][0]
-                        branch1 = y.outDict['free'][1]
-                        y = branch0 #keep the first one and keep going through this process of checking for free transitions
-                        z = branch1
-                        possibleNewStates.union(freeTransitions(z))
-                    else:
-                        y = y.outDict['free']
-                    possibleNewStates.add(y)
-                return possibleNewStates
-
-
 
             for state in currentStates: #...but we also have to deal with free transitions.
                                         #Keep every state in the set, but add every state we /could/ get to through a free transition
