@@ -215,7 +215,7 @@ F = "1(00|101)"
 ##print match(binary, A, aCheck2) == False
 ##print match(binary, A, aCheck3) == True
 
-aLang = Language(binary, A)
+##aLang = Language(binary, A)
 
 
 ##fCheck1 = "1101" #true
