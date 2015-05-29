@@ -3,6 +3,49 @@
 
 from regexParens import parens, findBuddy
 
+
+class Language():
+    def __init__(self, alphabet, expression):
+        self.alphabet = alphabet #a list with each character in the alphabet
+        self.expression = parens(alphabet, expression) #a string to be parsed
+        #should only include letters in self.alphabet and (,),|,*,.
+        self.states = createStatesMASTER(self.alphabet, self.expression) #list with all of the states in the machine
+
+
+    def checkString(self, string):
+        
+        currentStates = set([self.states[1]]) #just the start state so far
+        for character in string:
+
+            #print character
+
+            nextStates = set()
+            for state in currentStates:
+                nextStates.add(state.outDict[character])
+
+            currentStates = nextStates
+            nextStates = set()
+
+            for state in currentStates:
+                y = state
+                while 'free' in y.outDict.keys():
+                    y = y.outDict['free']
+                    nextStates.add(y)
+            currentStates = currentStates.union(nextStates)
+            nextStates = set()
+
+            #print "currentStates"
+            #for state in currentStates:
+            #    print state.name
+
+            #print ''
+
+        for state in currentStates:
+            if state.acceptState:
+                return True
+        return False
+                                       
+
 class State():
     def __init__(self, name, alphabet, trap, waitForDict=None):
         self.alphabet = alphabet
@@ -96,21 +139,56 @@ def createStatesMASTER(alphabet, expression):
     return statesList
         
 
+def check(alphabet, expression, string):
+    language = Language(alphabet, expression)
+    return language.checkString(string)
 
-##print "Tests!"
+
+
+#print "Tests!"
 
 binary = ['0', '1']
 
 B = "1(1(00)*1)*"
-C = ".(11(1*))*(1*)"
+C = ".(11(0*))*(1*)" #didn't work with an extra * at the end.....why??
 E = "1(011*)*."
 
-##bList = createStatesMASTER(binary, parens(binary, B))
-##cList = createStatesMASTER(binary, parens(binary, C))
-##eList = createStatesMASTER(binary, parens(binary, E))
+
+##bLang = Language(binary, parens(binary, B))
+##bCheck1 = '1100001' #true
+bCheck2 = '110000111' #true
+##bCheck3 = '11000011' #false
+##bCheck4 = '11000010' #false
+##bCheck5 = '110001' #false
+##bCheck6 = '1' #true
 ##
+##bCheckList = [bCheck1, bCheck2, bCheck3, bCheck4, bCheck5, bCheck6]
+##for s in bCheckList:
+##    print bLang.checkString(s)
+
+
+print check(binary, B, bCheck2)
+
+##cLang = Language(binary, parens(binary, C))
+##cCheck1 = '0110001' #true
+##cCheck2 = '01100010' #false
+##cCheck3 = '01111' #true
+##cCheck4 = '1111111' #true
+##cCheck5 = '01110001' #false
+##cCheck6 = '101' #false
 ##
-##for state in eList:
+##cCheckList = [cCheck1, cCheck2, cCheck3,cCheck4, cCheck5, cCheck6]
+##for s in cCheckList:
+##    print cLang.checkString(s)
+##
+
+
+#bList = createStatesMASTER(binary, parens(binary, B))
+#cList = createStatesMASTER(binary, parens(binary, C))
+#eList = createStatesMASTER(binary, parens(binary, E))
+
+
+##for state in bList:
 ##    print state.name
 ##    if state.acceptState == True:
 ##            print "acceptState"
@@ -118,4 +196,3 @@ E = "1(011*)*."
 ##    print ''
 
 #yay! substituting bList or cList in for eList will print out a description of the correct NFA for each.
-
