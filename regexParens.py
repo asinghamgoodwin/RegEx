@@ -113,7 +113,10 @@ def parens(alphabet, stringExpression):
 #at the beginning of the parenthesis so that you know that you're about to see
 #something of the form (Machine1)|(Machine2), which helps out my Matching functions.
 def parensPLUS(alphabet, stringExpression):
+    
     expression = list(stringExpression)
+    expression.append(")")
+    expression.insert(0, '(')
 
     #first find all the stars and deal with them
     starList = []
