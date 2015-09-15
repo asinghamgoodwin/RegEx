@@ -91,7 +91,7 @@ class Star(Modifier):
 
 ALPHABET = ["0", "1"]
 
-MODIFIERS = ["*"]
+MODIFIERS = ["*", "+", "?"]
 
 def findBuddy(expression, location): 
     """ helper function to find the matching paren
@@ -178,6 +178,18 @@ def parse(regex):
             if regex[i] == "*":
                 modifier = Star()
                 i += 1
+
+            # turn M+ into MM*
+            elif regex[i] == "+":
+                expressionList.append(Expression(matcher))
+                modifier = Star()
+                i += 1
+
+            # turn M? into M|""
+            elif regex[i] == "?":
+                matcher = Pipe(Regex([Expression(matcher)]), parse(""))
+                i += 1
+
             else:
                 return "FAILURE - not dealing with "+regex[i]+" modifier yet"
 
@@ -191,7 +203,11 @@ testList = ["10*",
             "(10)*",
             "111(010)*111",
             "(00|11)",
-            "(00|11|01)"
+            "(00|11|01)",
+            "1\\0*",
+            "10+",
+            "10?",
+            ".*101",
             ]
 
 for test in testList:
