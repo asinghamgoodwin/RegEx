@@ -119,22 +119,50 @@ def findBuddy(expression, location):
         if counter == 0:
             return i
 
-def parenthesizePipeIfNeeded(regex):
-    """ add parens around the whole regex if there's a | that is not properly contained """
+# def parenthesizePipeIfNeeded(regex):
+#     """ add parens around the whole regex if there's a | that is not properly contained """
+#     counter = 0
+#     for char in regex:
+#         if char == "(":
+#             counter -= 1
+#         elif char == ")":
+#             counter += 1
+#         elif char == "|":
+#             if counter == 0:
+#                 return "("+regex+")"
+#     return regex
+
+
+def isInScope(regex, specialCharacter):
     counter = 0
-    for char in regex:
+    for i, char in enumerate(regex):
         if char == "(":
             counter -= 1
         elif char == ")":
             counter += 1
-        elif char == "|":
+        elif char == specialCharacter:
             if counter == 0:
-                return "("+regex+")"
-    return regex
+                return True
+    return False
+
+
+def findFirstInScope(regex, specialCharacter):
+    counter = 0
+    for i, char in enumerate(regex):
+        if char == "(":
+            counter -= 1
+        elif char == ")":
+            counter += 1
+        elif char == specialCharacter:
+            if counter == 0:
+                return i
+    return False
 
 
 def parse(regex):
-    regex = parenthesizePipeIfNeeded(regex)
+#    regex = parenthesizePipeIfNeeded(regex)
+    if isInScope(regex, "|"):
+        regex = "("+regex+")"
     expressionList = []
 
     # looking for expressions to put into the list
@@ -157,8 +185,8 @@ def parse(regex):
             closeParen = findBuddy(regex, i)
             expressionInParens = regex[i+1:closeParen]
 
-            if "|" in expressionInParens:
-                pipeLocation = expressionInParens.find("|") # this will just find the first instance
+            if isInScope(expressionInParens, "|"):
+                pipeLocation = findFirstInScope(expressionInParens, "|")
                 matcher = Pipe(parse(expressionInParens[:pipeLocation]), parse(expressionInParens[pipeLocation+1:]))
 
             else:
@@ -208,7 +236,10 @@ testList = ["10*",
             "10+",
             "10?",
             ".*101",
+            "((10*))",
+            "(0|1(0|1)0|1)"
             ]
+
 
 for test in testList:
     print test
